@@ -33,14 +33,20 @@ namespace Assembler
             //Parser 생성자
             //Opens the input file/stream and gets ready to parse it
             fileAddr = codeFile;
-            progFile = new StreamReader(fileAddr);
-            progLength = File.ReadAllLines(fileAddr).Length;
+            try
+            {
+                progFile = new StreamReader(fileAddr);
+                progLength = File.ReadAllLines(fileAddr).Length;
+            }
+            catch (Exception e) {
+                Console.WriteLine("Can't find the file through given address");
+                Console.WriteLine(e.Message);
 
+            }
+            
 
         }
-        ~Parser() { //소멸자는 가비지 컬렉터가 알아서 처리해줌
-            progFile.Close();
-        }
+ 
 
 
         public void advance() // advance안에서 다른 메소드를 활용하는 방식이다.
@@ -87,11 +93,13 @@ namespace Assembler
 
             if (strArr[0] == null)
             {
+                Console.WriteLine("Effective Instruction Length : " + effectCount);
                 return;
 
             }
             else if (strArr[0] == "")
             {
+                Console.WriteLine("Effective Instruction Length : " + effectCount);
                 return;
 
             }

@@ -31,25 +31,19 @@ namespace Assembler
     2.이를 string으로 output file로 출력한다. >>파일 출력 
 
         */
-
-        /*
-                        <작업 현황>
-                1.SymbolTable.cs 완성
-                2.Parser.cs 의 dest,comp,jump()코드 다시 수정해야함
-                3.Code.cs 완성 
-
-                @2
-        같은 거는 숫자로 값을 넣어야하는 것인데
-        바로 16으로 가버리는게 문제이다.
-
-        D=A같은 명령어에서는 완전히 틀렸다. 수정 요망
-        */
+        //string outFile = "C:\\Users\\c\\source\\repos\\Assembler\\Assembler\\progCmp.hack";
+        //string inputFile = "C:\\Users\\c\\source\\repos\\Assembler\\Assembler\\prog.asm";
 
 
         static void Main(string[] args)
-        {   //<Initial>
-            string outFile = "C:\\Users\\c\\source\\repos\\Assembler\\Assembler\\Add.hack";
-            string inputFile = "C:\\Users\\c\\source\\repos\\Assembler\\Assembler\\Add.asm";
+        {   
+            
+     //<Initial>
+            Console.Write("Load File Address >>");
+            string inputFile = Console.ReadLine();
+            Console.Write("Save File Address >>");
+            string outFile = Console.ReadLine();
+
             Parser parser = new Parser(inputFile);//1. Open.asm file/stream
             SymbolTable tb = new SymbolTable();//2. Make Symbol Table
             Code cd= new Code(); 
@@ -82,7 +76,7 @@ namespace Assembler
             //tb.showContain("address", "0");
             //tb.showAll();
 
-            //<First Pass>
+     //<First Pass>
 
             while (parser.hasMoreLines() == true)
             {
@@ -101,7 +95,8 @@ namespace Assembler
 
             }
             tb.showAll();
-
+            Console.WriteLine("");
+            Console.WriteLine("<<<<<<<<<<<<<<<<<<<<<<<<    Second Pass    >>>>>>>>>>>>>>>>>>>>>>>");
 
             //<Second Pass>
 
@@ -112,24 +107,45 @@ namespace Assembler
             {
                 parser2.advance();            // 1. Read program code one by one again
                 Console.WriteLine("Instruction Type : {0}  A:1, C:2, L:3, etc:-1", parser.instructionType());
-                string valName = "";
-
+                
+               
                 if (parser2.instructionType() == 1) //A-명령어
                 {
+                    string valName = "";
+                    string binInst = "";
                     //1.@뺀다.
                     valName = parser2.symbol();
+                    
+                    //2-1.이름이 숫자이면 그 값 그대로 이진수 변환  @2 같은 경우
+                    if (int.TryParse(valName, out int valNameNum))
+                    {   //3.숫자를 2진수 형태의 문자열로 바꾼다.
+                        binInst = Convert.ToString(valNameNum, 2); //숫자를 2진수 형태의 문자열로 바꾼다.
+                        binInst = binInst.PadLeft(16, '0'); //왼쪽에 빈자리를 0으로 채워 16비트 맞춰주는 함수
 
-                    //2.테이블에 같은 이름이 없다면 넣는다. 같은 이름 없으면 무시
-                    if (tb.contains("symbol", valName) == false)
-                    {
+                    }
+
+
+                    //2-2.테이블에 같은 이름이 없다면 넣는다. 같은 이름 없으면 무시. @i, @loop 같은 변수만 해당된다.
+                    else if (tb.contains("symbol", valName) == false)
+                    {   //테이블에 변수의 주소를 넣는다.
                         tb.addEntry(valName, varStr);
                         varStr = varStr + 1;// 변수 추가했으니 주소 1증가
+                        //3. 테이블에 있는 해당 변수의 address를 2진수로 바꾸어서 문자열로 변환
+                        int binVal = tb.getAddress(valName);//해당 변수의 address
+                        binInst = Convert.ToString(binVal, 2);
+                        binInst = binInst.PadLeft(16, '0'); //왼쪽에 빈자리를 0으로 채워 16비트 맞춰주는 함수
+
+
                     }
-                    //2-2.테이블에 같은 이름이 있더라도 아래 3. 단계에서 값을 읽어들여 문자열로 변환할 것이다.
-                    //3.테이블에 있는  해당 변수의 address를 2진수로 바꾸어서 문자열로 변환
-                    int binVal = tb.getAddress(valName);//해당 변수의 address
-                    string binInst = Convert.ToString(binVal, 2);
-                    binInst=binInst.PadLeft(16, '0'); //왼쪽에 빈자리를 0으로 채워 16비트 맞춰주는 함수
+                    //2-3.테이블에 같은 이름이 있다면
+                    else {
+                        //3. 테이블에 있는 해당 변수의 address를 2진수로 바꾸어서 문자열로 변환
+                        int binVal = tb.getAddress(valName);//해당 변수의 address
+                        binInst = Convert.ToString(binVal, 2);
+                        binInst = binInst.PadLeft(16, '0'); //왼쪽에 빈자리를 0으로 채워 16비트 맞춰주는 함수
+                    }
+                    Console.WriteLine("[A-Instruction] >> "+binInst);
+                    
 
 
                     //4.파일 출력
@@ -147,7 +163,7 @@ namespace Assembler
                         Console.WriteLine("A-INNSTRUCTION : File Out Finally");
 
                     }
-
+                    Console.WriteLine(" ");
 
                 }
                 else if (parser2.instructionType() == 2) //C-명령어
@@ -155,14 +171,17 @@ namespace Assembler
                     string destPart = parser2.dest();// ex) D    in "D=M;JMP"
                     string compPart = parser2.comp();// ex) M    in "D=M;JMP"
                     string jumpPart = parser2.jump();// ex) JMP  in "D=M;JMP"
+                    Console.WriteLine("[C-Instruction] >> 111 " + compPart + " "+ destPart + " "+jumpPart);
+
 
                     string destBin= cd.dest(destPart);// Binary String : 3 Bits  b000
                     string compBin= cd.comp(compPart);// Binary String : 7 Bits  b000_0000
                     string jumpBin= cd.jump(jumpPart);// Binary String : 3 Bits  b000
+                    Console.WriteLine("[C-Instruction] >> 111 " + compBin + " " + destBin + " " + jumpBin);
 
                     //2.출력할 문자열 정리
-                    string binInst="111"+destBin+compBin+jumpBin;
-
+                    string binInst="111"+compBin+destBin+jumpBin;
+                   
                     //3. 파일출력
 
                     try
@@ -179,6 +198,7 @@ namespace Assembler
                         Console.WriteLine("C-INNSTRUCTION : File Out Finally");
 
                     }
+                    Console.WriteLine(" ");
 
 
                 }
@@ -186,7 +206,7 @@ namespace Assembler
                 {
                     
                     parser2.effectCount = parser2.effectCount - 1;
-
+                    Console.WriteLine(" ");
                 }
 
 
