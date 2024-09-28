@@ -36,9 +36,9 @@ namespace Assembler
 
 
         static void Main(string[] args)
-        {   
-            
-     //<Initial>
+        {
+
+            //<Initial>
             Console.Write("Load File Address >>");
             string inputFile = Console.ReadLine();
             Console.Write("Save File Address >>");
@@ -46,7 +46,7 @@ namespace Assembler
 
             Parser parser = new Parser(inputFile);//1. Open.asm file/stream
             SymbolTable tb = new SymbolTable();//2. Make Symbol Table
-            Code cd= new Code(); 
+            Code cd = new Code();
 
             tb.addEntry("R0", 0); //3. Add Predefined Symbol into Table
             tb.addEntry("R1", 1);
@@ -76,7 +76,7 @@ namespace Assembler
             //tb.showContain("address", "0");
             //tb.showAll();
 
-     //<First Pass>
+            //<First Pass>
 
             while (parser.hasMoreLines() == true)
             {
@@ -89,8 +89,8 @@ namespace Assembler
                     parser.effectCount = parser.effectCount - 1;
 
                     string labelName = parser.symbol();//Label 의 () 제거
-                    tb.addEntry(labelName,num); //label 테이블에 추가
-                   
+                    tb.addEntry(labelName, num); //label 테이블에 추가
+
                 }
 
             }
@@ -107,15 +107,15 @@ namespace Assembler
             {
                 parser2.advance();            // 1. Read program code one by one again
                 Console.WriteLine("Instruction Type : {0}  A:1, C:2, L:3, etc:-1", parser.instructionType());
-                
-               
+
+
                 if (parser2.instructionType() == 1) //A-명령어
                 {
                     string valName = "";
                     string binInst = "";
                     //1.@뺀다.
                     valName = parser2.symbol();
-                    
+
                     //2-1.이름이 숫자이면 그 값 그대로 이진수 변환  @2 같은 경우
                     if (int.TryParse(valName, out int valNameNum))
                     {   //3.숫자를 2진수 형태의 문자열로 바꾼다.
@@ -138,14 +138,15 @@ namespace Assembler
 
                     }
                     //2-3.테이블에 같은 이름이 있다면
-                    else {
+                    else
+                    {
                         //3. 테이블에 있는 해당 변수의 address를 2진수로 바꾸어서 문자열로 변환
                         int binVal = tb.getAddress(valName);//해당 변수의 address
                         binInst = Convert.ToString(binVal, 2);
                         binInst = binInst.PadLeft(16, '0'); //왼쪽에 빈자리를 0으로 채워 16비트 맞춰주는 함수
                     }
-                    Console.WriteLine("[A-Instruction] >> "+binInst);
-                    
+                    Console.WriteLine("[A-Instruction] >> " + binInst);
+
 
 
                     //4.파일 출력
@@ -171,17 +172,17 @@ namespace Assembler
                     string destPart = parser2.dest();// ex) D    in "D=M;JMP"
                     string compPart = parser2.comp();// ex) M    in "D=M;JMP"
                     string jumpPart = parser2.jump();// ex) JMP  in "D=M;JMP"
-                    Console.WriteLine("[C-Instruction] >> 111 " + compPart + " "+ destPart + " "+jumpPart);
+                    Console.WriteLine("[C-Instruction] >> 111 " + compPart + " " + destPart + " " + jumpPart);
 
 
-                    string destBin= cd.dest(destPart);// Binary String : 3 Bits  b000
-                    string compBin= cd.comp(compPart);// Binary String : 7 Bits  b000_0000
-                    string jumpBin= cd.jump(jumpPart);// Binary String : 3 Bits  b000
+                    string destBin = cd.dest(destPart);// Binary String : 3 Bits  b000
+                    string compBin = cd.comp(compPart);// Binary String : 7 Bits  b000_0000
+                    string jumpBin = cd.jump(jumpPart);// Binary String : 3 Bits  b000
                     Console.WriteLine("[C-Instruction] >> 111 " + compBin + " " + destBin + " " + jumpBin);
 
                     //2.출력할 문자열 정리
-                    string binInst="111"+compBin+destBin+jumpBin;
-                   
+                    string binInst = "111" + compBin + destBin + jumpBin;
+
                     //3. 파일출력
 
                     try
@@ -204,7 +205,7 @@ namespace Assembler
                 }
                 else if (parser2.instructionType() == 3) //(label)은 Table의 그 값이 저장되어 있고 @label 일때 값이 출력된다. 즉, (label)을 읽을 때, 출력할 것은 없다.
                 {
-                    
+
                     parser2.effectCount = parser2.effectCount - 1;
                     Console.WriteLine(" ");
                 }
@@ -214,9 +215,20 @@ namespace Assembler
             progBin.Close();
 
             Console.WriteLine("<<<<<<<<<<<<<<<<<<<   DONE   >>>>>>>>>>>>>>>>>>>>");
-            Console.WriteLine("Enter any Key");
-            Console.ReadLine();
 
+            string getKey = "";
+            while (getKey != "Exit")
+            {     
+                Console.WriteLine("Enter any Key ");
+                Console.WriteLine("[ShowTable] : Showing All Variable");
+                Console.WriteLine("[Exit]       : Program Exit");
+                getKey = Console.ReadLine();
+                if (getKey == "ShowTable") {
+                    tb.showAll();
+                
+                }
+
+            }
         }
     }
 }
