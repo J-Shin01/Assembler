@@ -153,17 +153,13 @@ namespace Assembler
                     try
                     {
                         progBin.WriteLine(binInst);
-
+                        Console.WriteLine("[A-INNSTRUCTION ] " + "Write" );
                     }
                     catch (Exception e)
                     {
-                        Console.WriteLine("Exception" + e.Message);
+                        Console.WriteLine("[A-INNSTRUCTION ]" + "Exception" + e.Message);
                     }
-                    finally
-                    {
-                        Console.WriteLine("A-INNSTRUCTION : File Out Finally");
-
-                    }
+                    
                     Console.WriteLine(" ");
 
                 }
@@ -188,15 +184,15 @@ namespace Assembler
                     try
                     {
                         progBin.WriteLine(binInst);
-
+                        Console.WriteLine("[C-INNSTRUCTION ] " + "Write" );
                     }
                     catch (Exception e)
                     {
-                        Console.WriteLine("Exception" + e.Message);
+                        Console.WriteLine("[C-INNSTRUCTION ] " + "Exception" + e.Message);
                     }
                     finally
                     {
-                        Console.WriteLine("C-INNSTRUCTION : File Out Finally");
+                        
 
                     }
                     Console.WriteLine(" ");
