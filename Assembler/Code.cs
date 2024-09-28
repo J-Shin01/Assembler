@@ -17,7 +17,7 @@ namespace Assembler
             
             var destDiction = new Dictionary<string, string>()
             {
-                { "null","000" },  { "M","001" },{ "D","010" },{ "DM","011" },
+                { "null","000" },  { "M","001" },{ "D","010" },{ "MD","011" },
                 { "A","100" },  { "AM","101" },{ "AD","110" },{ "ADM","111" }
             };
             try
