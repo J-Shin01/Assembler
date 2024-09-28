@@ -212,7 +212,10 @@ namespace Assembler
 
             }
             progBin.Close();
-            
+
+            Console.WriteLine("<<<<<<<<<<<<<<<<<<<   DONE   >>>>>>>>>>>>>>>>>>>>");
+            Console.WriteLine("Enter any Key");
+            Console.ReadLine();
 
         }
     }

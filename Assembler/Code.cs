@@ -20,8 +20,14 @@ namespace Assembler
                 { "null","000" },  { "M","001" },{ "D","010" },{ "DM","011" },
                 { "A","100" },  { "AM","101" },{ "AD","110" },{ "ADM","111" }
             };
-            outBin=destDiction[input];
+            try
+            {
+                outBin = destDiction[input];
+            }
+            catch (Exception e) {
+                Console.WriteLine(e.Message);
 
+            }
             return outBin;
         }
 
@@ -39,7 +45,16 @@ namespace Assembler
                 { "M" ,"1110000" }, { "!M" ,"1110001" }, { "-M" ,"1110011" }, { "M+1" ,"1110111" }, { "M-1" ,"1110010" }, { "D+M" ,"1000010" },
                 { "D-M" ,"1010011" }, { "M-D" ,"1000111" }, { "D&M" ,"1000000" }, { "D|M" ,"1010101" }
             };
-            outBin = compDiction[input];
+
+            try
+            {
+                outBin = compDiction[input];
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+
+            }
 
             return outBin;
         }
@@ -54,8 +69,16 @@ namespace Assembler
                 { "null","000" },  { "JGT","001" },{ "JEQ","010" },{ "JGE","011" },
                 { "JLT","100" },  { "JNE","101" },{ "JLE","110" },{ "JMP","111" }
             };
-            outBin = jumpDiction[input];
 
+            try
+            {
+                outBin = jumpDiction[input];
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+
+            }
             return outBin;
         }
     }
